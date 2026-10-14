@@ -1,0 +1,30 @@
+[
+  {
+    "id":1,
+    "name":"Kottu Roti",
+    "price":750,
+    "category":"Mains",
+    "available":true
+  },
+  {
+    "id":2,
+    "name":"Fried Rice",
+    "price":850,
+    "category":"Mains",
+    "available":true
+  },
+  {
+    "id":3,
+    "name":"Veg Sub",
+    "price":600,
+    "category":"Snacks",
+    "available":false
+  },
+  {
+    "id":4,
+    "name":"Hoppers",
+    "price":150,
+    "category":"Snacks",
+    "available":true
+  }
+]

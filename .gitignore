@@ -1,0 +1,16 @@
+# dependencies & build output
+node_modules/
+dist/
+bin/
+obj/
+
+# secrets / local config - never commit
+.env
+.env.*
+!.env.example
+appsettings.Development.json
+
+# editor / OS
+.DS_Store
+.idea/
+.vscode/
