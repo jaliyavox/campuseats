@@ -40,38 +40,65 @@ function OrderPage() {
     }
 
     if (done) {
-        return <h2>Thanks, {form.name}! Order received.</h2>;
+        return (
+            <div className="panel-wrap">
+                <div className="panel">
+                    <h2>Thanks, {form.name}!</h2>
+                    <p className="lead">Order received. We'll email {form.email} when it's ready.</p>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Place Order</h2>
-            <input
-                name="name"
-                placeholder="Name"
-                value={form.name}
-                onChange={handleChange}
-            />
-            <br />
-            {errors.name && <p>{errors.name}</p>}
-            <input
-                name="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={handleChange}
-            />
-            <br />
-            {errors.email && <p>{errors.email}</p>}
-            <input
-                type="number"
-                name="qty"
-                value={form.qty}
-                onChange={handleChange}
-            />
-            <br />
-            {errors.qty && <p>{errors.qty}</p>}
-            <button type="submit">Place Order</button>
-        </form>
+        <div className="panel-wrap">
+            <form className="panel" onSubmit={handleSubmit} noValidate>
+                <h2>Place Order</h2>
+                <p className="lead">Skip the queue - we'll have it ready.</p>
+
+                <div className="field">
+                    <label htmlFor="name">Name</label>
+                    <input
+                        id="name"
+                        name="name"
+                        placeholder="Your name"
+                        value={form.name}
+                        onChange={handleChange}
+                        aria-invalid={!!errors.name}
+                    />
+                    {errors.name && <p className="field-error">{errors.name}</p>}
+                </div>
+
+                <div className="field">
+                    <label htmlFor="email">Email</label>
+                    <input
+                        id="email"
+                        name="email"
+                        placeholder="you@my.sliit.lk"
+                        value={form.email}
+                        onChange={handleChange}
+                        aria-invalid={!!errors.email}
+                    />
+                    {errors.email && <p className="field-error">{errors.email}</p>}
+                </div>
+
+                <div className="field">
+                    <label htmlFor="qty">Quantity</label>
+                    <input
+                        id="qty"
+                        type="number"
+                        name="qty"
+                        min="1"
+                        value={form.qty}
+                        onChange={handleChange}
+                        aria-invalid={!!errors.qty}
+                    />
+                    {errors.qty && <p className="field-error">{errors.qty}</p>}
+                </div>
+
+                <button type="submit" className="btn btn-dark">Place Order</button>
+            </form>
+        </div>
     );
 }
 

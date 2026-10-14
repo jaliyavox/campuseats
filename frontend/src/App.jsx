@@ -1,40 +1,55 @@
-import { Routes, Route, NavLink } from "react-router-dom";
+import { Routes, Route, NavLink, Link } from "react-router-dom";
 
 import MenuPage from "./features/menu/pages/MenuPage";
 import DishDetailPage from "./features/menu/pages/DishDetailPage";
 import OrderPage from "./features/menu/pages/OrderPage";
+import { LogoIcon, GitHubIcon } from "./components/Icons";
 
 function App() {
     return (
-        <div>
-            <h1>CampusEats Dashboard</h1>
+        <div className="frame">
+            <header className="header">
+                <Link to="/" className="brand">
+                    <LogoIcon />
+                    CampusEats
+                </Link>
 
-            <nav>
-                <NavLink to="/">Menu</NavLink>
-                {" | "}
-                <NavLink to="/order">Place Order</NavLink>
-            </nav>
+                <nav className="nav">
+                    <NavLink to="/" end>Menu</NavLink>
+                    <NavLink to="/order">Place Order</NavLink>
+                </nav>
 
-            <hr />
+                <Link to="/order" className="btn btn-light header-cta">
+                    Order Now
+                </Link>
+            </header>
 
-            <Routes>
-                <Route path="/" element={<MenuPage />} />
+            <main>
+                <Routes>
+                    <Route path="/" element={<MenuPage />} />
+                    <Route path="/dish/:id" element={<DishDetailPage />} />
+                    <Route path="/order" element={<OrderPage />} />
+                    <Route
+                        path="*"
+                        element={
+                            <div className="panel-wrap">
+                                <div className="panel">
+                                    <h2>404</h2>
+                                    <p className="lead">This page is not on the menu.</p>
+                                    <Link to="/" className="btn btn-dark">Back to Menu</Link>
+                                </div>
+                            </div>
+                        }
+                    />
+                </Routes>
+            </main>
 
-                <Route
-                    path="/dish/:id"
-                    element={<DishDetailPage />}
-                />
-
-                <Route
-                    path="/order"
-                    element={<OrderPage />}
-                />
-
-                <Route
-                    path="*"
-                    element={<h2>404 - Page Not Found</h2>}
-                />
-            </Routes>
+            <footer className="footer">
+                <div className="socials">
+                    <a href="https://github.com" aria-label="GitHub"><GitHubIcon /></a>
+                </div>
+                <span>CampusEats · SE3090 Lab 11</span>
+            </footer>
         </div>
     );
 }
