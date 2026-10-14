@@ -15,15 +15,22 @@ if (!string.IsNullOrEmpty(port))
 
 builder.Services.AddControllers();
 
-// Database
-builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+// Database - in production the connection string comes from ConnectionStrings__Default
+var connectionString = builder.Configuration.GetConnectionString("Default");
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException(
+        "Missing connection string: set the ConnectionStrings__Default environment variable.");
+
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseNpgsql(connectionString));
 
 // Service
 builder.Services.AddScoped<IMenuService, MenuService>();
 
 // JWT Authentication
 var jwt = builder.Configuration.GetSection("Jwt");
+if (string.IsNullOrWhiteSpace(jwt["Key"]))
+    throw new InvalidOperationException(
+        "Missing JWT key: set the Jwt__Key environment variable.");
 var key = Encoding.UTF8.GetBytes(jwt["Key"]!);
 
 builder.Services
