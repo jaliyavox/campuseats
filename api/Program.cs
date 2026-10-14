@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ var connectionString = builder.Configuration.GetConnectionString("Default");
 if (string.IsNullOrWhiteSpace(connectionString))
     throw new InvalidOperationException(
         "Missing connection string: set the ConnectionStrings__Default environment variable.");
+connectionString = NormalizePostgresConnectionString(connectionString);
 
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseNpgsql(connectionString));
 
@@ -103,3 +105,31 @@ app.MapControllers();
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
 app.Run();
+
+// Managed Postgres providers (Neon, Render, Railway) hand out URLs like
+// postgresql://user:pass@host/db?sslmode=require - Npgsql needs key=value pairs.
+static string NormalizePostgresConnectionString(string value)
+{
+    if (!value.StartsWith("postgres://") && !value.StartsWith("postgresql://"))
+        return value;
+
+    var uri = new Uri(value);
+    var user = uri.UserInfo.Split(':', 2);
+    var query = uri.Query.TrimStart('?').Split('&', StringSplitOptions.RemoveEmptyEntries)
+        .Select(p => p.Split('=', 2))
+        .ToDictionary(p => p[0], p => p.Length > 1 ? p[1] : "", StringComparer.OrdinalIgnoreCase);
+
+    var csb = new NpgsqlConnectionStringBuilder
+    {
+        Host = uri.Host,
+        Port = uri.Port > 0 ? uri.Port : 5432,
+        Database = uri.AbsolutePath.TrimStart('/'),
+        Username = Uri.UnescapeDataString(user[0]),
+        Password = user.Length > 1 ? Uri.UnescapeDataString(user[1]) : null,
+        SslMode = SslMode.Require
+    };
+    if (query.TryGetValue("channel_binding", out var cb) && cb == "require")
+        csb.ChannelBinding = ChannelBinding.Require;
+
+    return csb.ConnectionString;
+}
