@@ -46,7 +46,7 @@ function App() {
 
             <footer className="footer">
                 <div className="socials">
-                    <a href="https://github.com" aria-label="GitHub"><GitHubIcon /></a>
+                    <a href="https://github.com/jaliyavox/campuseats" aria-label="GitHub"><GitHubIcon /></a>
                 </div>
                 <span>CampusEats · SE3090 Lab 11</span>
             </footer>
